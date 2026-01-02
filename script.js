@@ -1,42 +1,53 @@
+//load categories and display categories
 const loadCategory=()=>{
     const url ="https://taxi-kitchen-api.vercel.app/api/v1/categories"
     fetch(url)
     .then((res)=> res.json())
     .then((data)=> displayCategory(data.categories))
 }
+const displayCategory=(categories)=>{
+    const catContainer = document.getElementById("category-container")
+    //console.log(catContainer)
+    catContainer.innerHTML="";
+    for(let cat of categories)
+    {
+        // console.log(cat)
+        const categoryCard = document.createElement("div")
+        categoryCard.innerHTML =`
+            <button id="cat-btn-${cat.id}" onclick="loadFoods(${cat.id})" class="btn justify-start btn-block shadow btn-category">
+                <img
+                src="${cat.categoryImg}"
+                alt=""
+                class="w-10"
+                />${cat.categoryName}
+            </button>
+        
+        `;
+        catContainer.append(categoryCard)
+
+    }
+}
+
+//load foods and display foods
 const loadFoods =(id)=>{
     //console.log("clicked",id)
     document.getElementById("food-container").classList.add("hidden")
     document.getElementById("loading-spinner").classList.remove("hidden")
 
-    const url = `https://taxi-kitchen-api.vercel.app/api/v1/categories/${id}`
+    const url =`https://taxi-kitchen-api.vercel.app/api/v1/categories/${id}`
     const catBtns = document.querySelectorAll(".btn-category")
     //console.log(catBtns)
     catBtns.forEach(btn => btn.classList?.remove("active"))
+   
     const currentBtn=document.getElementById(`cat-btn-${id}`)
     currentBtn.classList?.add("active");
+   
     fetch(url)
     .then(res=> res.json())
     .then(data => displayFoods(data.foods))
     //console.log(currentBtn)
     
     
-
-}
-const randomFoods =(id)=>{
-    //console.log("clicked",id)
-    const url = `https://taxi-kitchen-api.vercel.app/api/v1/foods/random`
-    fetch(url)
-    .then(res=> res.json())
-    .then(data => displayFoods(data.foods))
-    
-}
-const loadFoodDetails=(id)=>{
-    const url =` https://taxi-kitchen-api.vercel.app/api/v1/foods/${id}`
-    fetch(url)
-    .then(res => res.json())
-    .then(data => displayDetails(data.details))
-
 }
 const displayFoods=(foods)=>{
     const foodContainer = document.getElementById("food-container")
@@ -80,6 +91,14 @@ const displayFoods=(foods)=>{
     document.getElementById("loading-spinner").classList.add("hidden")
 }
 
+//load food Details
+const loadFoodDetails=(id)=>{
+    const url =` https://taxi-kitchen-api.vercel.app/api/v1/foods/${id}`
+    fetch(url)
+    .then(res => res.json())
+    .then(data => displayDetails(data.details))
+
+}
 const displayDetails =(food) =>{
     const detailsContainer = document.getElementById("details-container")
     detailsContainer.innerHTML = 
@@ -94,32 +113,16 @@ const displayDetails =(food) =>{
         <a href="${food.video}" target="_blank " class="btn btn-warning">Watch Video</a>
     `
     document.getElementById("my_modal_3").showModal()
-
 }
 
-const displayCategory=(categories)=>{
-    const catContainer = document.getElementById("category-container")
-    //console.log(catContainer)
-    catContainer.innerHTML="";
-    for(let cat of categories)
-    {
-        // console.log(cat)
-        const categoryCard = document.createElement("div")
-        categoryCard.innerHTML =`
-            <button id="cat-btn-${cat.id}" onclick="loadFoods(${cat.id})" class="btn justify-start btn-block shadow btn-category">
-                <img
-                src="${cat.categoryImg}"
-                alt=""
-                class="w-10"
-                />${cat.categoryName}
-            </button>
-        
-        `;
-        catContainer.append(categoryCard)
-
-    }
+const randomFoods =(id)=>{
+    //console.log("clicked",id)
+    const url = `https://taxi-kitchen-api.vercel.app/api/v1/foods/random`
+    fetch(url)
+    .then(res=> res.json())
+    .then(data => displayFoods(data.foods))
+    
 }
-
 loadCategory()
 randomFoods()
 
@@ -132,7 +135,7 @@ let cart = [];
 let total =0
 
 const addToCart =(btn,event)=>{
-  event.stopImmediatePropagation()
+  //event.stopImmediatePropagation()
   const card = btn.parentNode.parentNode
   const foodTitle = card.querySelector(".food-title").innerText
   const foodImg = card.querySelector(".food-img").src
